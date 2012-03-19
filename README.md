@@ -4,6 +4,10 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 
 ## How to use it
 ###Html
+	<style>
+		.feedback_css_class{ color: red; }
+	</style>
+
 	<script>
 	// To avoid $ alias conflict with other lib
 	$J = jQuery != null ? jQuery : null;
@@ -12,7 +16,7 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 	$J(function ($) {
 		AjaxFormValidator(
 		//required: url or method to be called
-		"validator",
+		"Test",
 
 		//required: parameters send along with post request
 		{
@@ -41,7 +45,6 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 
 	});
 	</script>
-
 
 	<div id="sample_form">
 	  <input id="email"  placeholder="email"/>
