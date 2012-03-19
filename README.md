@@ -58,13 +58,15 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 	[System.Web.Services.WebMethod]
 	public static ValidationDataPackage Test(ValidationDataPackage package)
 	{
+		var datalist = package.datalist;
+		
 		//check email
-		var d_email = package.data.FirstOrDefault(p => p.id == "email");
+		var d_email = datalist.FirstOrDefault(p => p.id == "email");
 		if (d_email != null)
 			d_email.message = String.IsNullOrEmpty(d_email.value) ? "Email can not be empty" : "";
 
 		//check password
-		var d_password = package.data.FirstOrDefault(p => p.id == "password");
+		var d_password = datalist.FirstOrDefault(p => p.id == "password");
 		if (d_password != null)
 			d_password.message = String.IsNullOrEmpty(d_password.value) ? "Password can not be empty" : "";
 
@@ -84,7 +86,7 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 	{
 		public string id;
 		public string name;
-		public List<ValidationData> data;
+		public List<ValidationData> datalist;
 		public string status;
 		public string message;
 	}
