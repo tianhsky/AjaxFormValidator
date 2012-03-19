@@ -1,9 +1,9 @@
- /*
+/*
  * AjaxFormValidator
  * Copyright 2012 Tianyu Huang
  * tianhsky@yahoo.com
  *
- * Version 1.0.0
+ * Version 1.0.1
  *
  * A plugin written in JavaScript to handle form submissions and automatically render messages returned in JSON for each input element.
  * This plugin requires jQuery.
@@ -16,42 +16,26 @@
 $J = jQuery != null ? jQuery : null; //to avoid $ alias conflict with other lib
 var AjaxFormValidator = function (url, options) {
 
-    // Define Objects
-    function ValidationDataPackage() {
-        this.id;
-        this.name;
-        this.data;
-        this.status;
-        this.message;
-    }
-
-    function ValidationData() {
-        this.id;
-        this.name;
-        this.value;
-        this.status;
-        this.message;
-    }
-
-    // Generate default options
+    // Default options
     var defaults = {
-        url:null, //where request sends to
-        fields:null, //list of form fields in jQuery
-        submits:null, //list of submit buttons in jQuery
-        form_wrapper:null, //outer wrapper element of the form in jQuery
-        submit_interval:2000, //interval between each submit event
+        url:null, //required: where request sends to
+        fields:null, //required: list of form fields in jQuery
+        submits:null, //optional: list of submit buttons in jQuery
+        form_wrapper:null, //optional: outer wrapper element of the form in jQuery
+        submit_interval:2000, //optional: interval between each submit event
 
         success_fun:function (resp) {
-        }, //customized add-on function for success post back
+        }, //optional: customized add-on function for success post back
         error_fun:function (xhr, ajaxOptions, thrownError) {
-        }, //customized add-on function for error post back
+        }, //optional: customized add-on function for error post back
+        simulate_postback_json:null, //optional: without server side code written, just want to see how it renders the json
 
-        show_loading:true, //show loading status when ajax is sending/receiving
-        postback_update:false, //update form fields with data returned from server
-        allow_submit:true, //allow enter or button click to submit form
+        show_loading:true, //optional: show loading status when ajax is sending/receiving
+        postback_update:false, //optional: update form fields with data returned from server
+        allow_submit:true, //optional: allow enter or button click to submit form
 
-        feedback_css_class:"feedback_css_class", //the css class for displaying feedback message
-        loading_css_class:"loading_css_class", //the css class for displaying loading message
+        feedback_css_class:"feedback_css_class", //optional: the css class for displaying feedback message
+        loading_css_class:"loading_css_class", //optional: the css class for displaying loading message
 
         start:function () {
         }
@@ -96,7 +80,7 @@ var AjaxFormValidator = function (url, options) {
         //
         if (typeof resp == "string") resp = jQuery.parseJSON(resp);
         var validationDataPackage = resp;
-        var validationDataList = validationDataPackage.data;
+        var validationDataList = validationDataPackage.datalist;
 
         for (var fields_i in opts.fields) {
             var field = opts.fields[fields_i];
@@ -126,20 +110,29 @@ var AjaxFormValidator = function (url, options) {
     // Ajax request sends to server
     function submit_form() {
         if (opts.allow_submit) {
-            var params = get_params();
-            pageMethod(
-                url,
-                null,
-                params,
-                function (resp) {
-                    response(resp);
-                    opts.success_fun(resp);
-                },
-                function (xhr, ajaxOptions, thrownError) {
-                    //alert(xhr.status + ", " + thrownError);
-                    opts.error_fun(xhr, ajaxOptions, thrownError);
-                }
-            );
+            //debug to see how json renders, NOT send actual request to server
+            if (opts.simulate_postback_json != null) {
+                response(opts.simulate_postback_json);
+            }
+            //actual send request to server
+            else {
+                var params = get_params();
+                pageMethod(
+                    url,
+                    null,
+                    params,
+                    function (resp) {
+                        response(resp);
+                        opts.success_fun(resp);
+                    },
+                    function (xhr, ajaxOptions, thrownError) {
+                        //alert(xhr.status + ", " + thrownError);
+                        opts.error_fun(xhr, ajaxOptions, thrownError);
+                    }
+                );
+            }
+
+
         }
 
     }
@@ -160,7 +153,8 @@ var AjaxFormValidator = function (url, options) {
         validationDataPackage =
         {
             package:{
-                data:dataList,
+                id:opts.form_wrapper.attr("id") != null ? opts.form_wrapper.attr("id") : "",
+                datalist:dataList,
                 status:"send"
             }
         };
@@ -247,7 +241,7 @@ var AjaxFormValidator = function (url, options) {
             }, wrapper.position());
             overlay = $J('<div>');
             overlay.attr('class', opts.loading_css_class);
-            overlay.css('position','absolute').css('top',pos.top).css('left',pos.left);
+            overlay.css('position', 'absolute').css('top', pos.top).css('left', pos.left);
             //if(overlay.width() <= 0) overlay.css('width',pos.width) ;
             //if(overlay.height() <= 0) overlay.css('height',pos.height) ;
             overlay.hide();
@@ -298,6 +292,24 @@ var AjaxFormValidator = function (url, options) {
             return JSON.stringify(obj);
         }
         return Sys.Serialization.JavaScriptSerializer.serialize(obj);
+    }
+
+
+    // Define Objects
+    function ValidationDataPackage() {
+        this.id;
+        this.name;
+        this.data;
+        this.status;
+        this.message;
+    }
+
+    function ValidationData() {
+        this.id;
+        this.name;
+        this.value;
+        this.status;
+        this.message;
     }
 
 };
