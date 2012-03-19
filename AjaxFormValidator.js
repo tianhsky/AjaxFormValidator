@@ -153,7 +153,7 @@ var AjaxFormValidator = function (url, options) {
         validationDataPackage =
         {
             package:{
-                id:opts.form_wrapper.attr("id") != null ? opts.form_wrapper.attr("id") : "",
+                id:opts.form_wrapper != null ? opts.form_wrapper.attr("id") : "",
                 datalist:dataList,
                 status:"send"
             }
