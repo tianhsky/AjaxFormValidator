@@ -34,7 +34,10 @@ var AjaxFormValidator = function (url, options) {
         postback_update:false, //optional: update form fields with data returned from server
         allow_submit:true, //optional: allow enter or button click to submit form
 
-        feedback_css_class:"feedback_css_class", //optional: the css class for displaying feedback message
+        feedback_display_position:{ margin_left:20, margin_top:-5 }, //optional: feedback position
+        error_css_class:"error_css_class", //optional: the css class for displaying error feedback message
+        warning_css_class:"warning_css_class", //optional: the css class for displaying warning feedback message
+        success_css_class:"success_css_class", //optional: the css class for displaying success feedback message
         loading_css_class:"loading_css_class", //optional: the css class for displaying loading message
 
         start:function () {
@@ -44,6 +47,8 @@ var AjaxFormValidator = function (url, options) {
     // Combine customized options with default options
     var opts = $J.extend(defaults, options);
 
+    // Private variables
+    var feedback_css_class = "feedback_css_class";
 
     // Define button events
     for (var i in opts.submits) {
@@ -152,10 +157,10 @@ var AjaxFormValidator = function (url, options) {
         }
         validationDataPackage =
         {
-            package:{
+            package : {
                 id:opts.form_wrapper != null ? opts.form_wrapper.attr("id") : "",
                 datalist:dataList,
-                status:"send"
+                status:"submit"
             }
         };
         return validationDataPackage;
@@ -183,6 +188,29 @@ var AjaxFormValidator = function (url, options) {
     function fill_feedback_element_from_validationData(feedback_element, validation_data) {
         if (!isEmpty(validation_data.message)) {
             feedback_element.html(validation_data.message);
+
+            if (!isEmpty(validation_data.status)) {
+                if (validation_data.status == "success") {
+                    feedback_element.removeClass(opts.warning_css_class);
+                    feedback_element.removeClass(opts.error_css_class);
+                    feedback_element.addClass(opts.success_css_class);
+                }
+                else if (validation_data.status == "error") {
+                    feedback_element.removeClass(opts.success_css_class);
+                    feedback_element.removeClass(opts.warning_css_class);
+                    feedback_element.addClass(opts.error_css_class);
+                }
+                else if (validation_data.status == "warning") {
+                    feedback_element.removeClass(opts.success_css_class);
+                    feedback_element.removeClass(opts.error_css_class);
+                    feedback_element.addClass(opts.warning_css_class);
+                }
+            }
+            else {
+                feedback_element.removeClass(opts.warning_css_class);
+                feedback_element.removeClass(opts.success_css_class);
+                feedback_element.addClass(opts.error_css_class);
+            }
         }
         else {
             feedback_element.html("");
@@ -192,13 +220,23 @@ var AjaxFormValidator = function (url, options) {
     function get_feedback_element(origin_field_element) {
         var feedback_element = origin_field_element.next();
         if (feedback_element < 0) {
-            feedback_element = $J('<div>').attr('class', opts.feedback_css_class);
+            feedback_element = $J('<div>').attr('class', feedback_css_class);
         }
         else {
-            if (!feedback_element.hasClass(opts.feedback_css_class)) {
-                feedback_element = $J('<div>').attr('class', opts.feedback_css_class);
+            if (!feedback_element.hasClass(feedback_css_class)) {
+                feedback_element = $J('<div>').attr('class', feedback_css_class);
             }
         }
+
+        // Enforce position
+        var pos = $J.extend({
+            width:origin_field_element.outerWidth(),
+            height:origin_field_element.outerHeight()
+        }, origin_field_element.position());
+        feedback_element.css('position', 'absolute')
+            .css('top', pos.top + opts.feedback_display_position.margin_top)
+            .css('left', pos.left + pos.width + opts.feedback_display_position.margin_left);
+
         return feedback_element;
     }
 
