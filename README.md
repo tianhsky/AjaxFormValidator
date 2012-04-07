@@ -1,9 +1,10 @@
 # AjaxFormValidator
 
-A plugin written in JavaScript to handle form submissions and automatically render messages returned in JSON for each input element.
+A plugin written in JavaScript to handle form submissions and automatically render messages returned in JSON for each input element
 
 ## How to use it
 ###Page
+
 	<style>
 	.error_css_class {
 		color: red;
@@ -64,6 +65,7 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 
 ###Server:
 ####ASP.NET:
+
 	// Controller method handle request
 	[System.Web.Services.WebMethod]
 	public static ValidationDataPackage Test(ValidationDataPackage package)
@@ -108,6 +110,7 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 	}
 
 ####Ruby on rails:
+
 	# Controller needs to be configured in route.rb to accept post request
 
 	# Controller method to handle request
@@ -145,12 +148,8 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 
 ## Dependencies
 
-This plugin requires jQuery.
-
-## License
-
-This is dual licensed under the MIT and GPL licenses.
+This plugin requires jQuery
 
 ## Authors
 
-Originally developed by Tianyu Huang.
+Tianyu Huang

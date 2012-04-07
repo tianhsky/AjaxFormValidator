@@ -3,14 +3,11 @@
  * Copyright 2012 Tianyu Huang
  * tianhsky@yahoo.com
  *
- * Version 1.0.1
+ * Version 1.0.0
  *
  * A plugin written in JavaScript to handle form submissions and automatically render messages returned in JSON for each input element.
  * This plugin requires jQuery.
- *
- * This is dual licensed under the MIT and GPL licenses:
- * 	http://www.opensource.org/licenses/mit-license.php
- *	http://www.gnu.org/licenses/gpl.html
+ * 
  */
 
 $J = jQuery != null ? jQuery : null; //to avoid $ alias conflict with other lib
