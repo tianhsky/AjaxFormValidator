@@ -1,0 +1,7 @@
+ 
+1.0.1
+ 	- support html attr for input elements; 
+ 	- customized feedback div support; 
+ 	- loading spinner;
+1.0.0 
+ 	- Basic form handling

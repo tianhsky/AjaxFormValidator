@@ -3,22 +3,8 @@
 A plugin written in JavaScript to handle form submissions and automatically render messages returned in JSON for each input element
 
 ## How to use it
-###Page
 
-	<style>
-	.error_css_class {
-		color: red;
-		border: solid 1px red;
-    	}
-	.warning_css_class {
-		color: orange;
-		border: solid 1px orange;
-	}
-	.success_css_class {
-		color: blue;
-		border: solid 1px blue;
-	}
-	</style>
+###Page
 
 	<script>
 	// To avoid $ alias conflict with other lib
@@ -26,87 +12,76 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 
 	// Register page elements
 	$J(function ($) {
-		AjaxFormValidator(
-		//required: url or method to be called
-		"Test",
-
-		//required: parameters send along with post request
+		AjaxFormValidator("/post_to_url",
 		{
-			//required: list of form fields in jQuery
-			fields:[$('#email'), $('#password')],
-
-			//optional: list of submit buttons in jQuery
-			submits:[$('#submit')],
-
-			//optional: the css class for displaying feedback message
-			error_css_class: "error_css_class",
-			warning_css_class: "warning_css_class",
-			success_css_class: "success_css_class",
-
-			//optional: without server side code written, just want to see how it renders the json
-			simulate_postback_json:
-			{"datalist":
-				[
-				{"id":"email", "value":"", "message":"Email can not be empty", "status":"error"},
-				{"id":"password", "value":"", "message":"Password can not be empty", "status":"warning"}
-  				]
-			}
-
+			form_wrapper: $("#sample_form"),
+			form_group: "form_group1",
+			success_fun: function (resp) { },
+			error_fun: function (resp) { }
 		});
 
 	});
 	</script>
 
 	<div id="sample_form">
-	  <div> <input id="email"  placeholder="email"/> </div>
-	  <div> <input id="password" type="password" placeholder="password"/> </div>
-	  <div> <input id="submit" type="button" value="Submit"/> </div>
+		<div> <input fg="form_group1" name="email" /> </div>
+		<div> 
+			Agree terms? 
+			<input fg="form_group1" type="radio" name="terms" value="yes" />  Yes |
+			<input fg="form_group1" type="radio" name="terms" value="no" />  No
+		</div>
+		<div> <button fg="form_group1" tf="submit">Submit</button> </div>
 	</div>
 
 ###Server:
-####ASP.NET:
+
+####ASP.NET C#:
 
 	// Controller method handle request
 	[System.Web.Services.WebMethod]
 	public static ValidationDataPackage Test(ValidationDataPackage package)
 	{
-		var datalist = package.datalist;
-		
-		//check email
-		var d_email = datalist.FirstOrDefault(p => p.id == "email");
-		if (d_email != null)
+		var d_email = package.GetItem("email");
+		if(String.IsNullOrEmpty(d_email))
 		{
-			d_email.message = String.IsNullOrEmpty(d_email.value) ? "Email can not be empty" : "";
+			d_email.message = "Email can not be empty";
 			d_email.status = "error";
 		}
 
-		//check password
-		var d_password = datalist.FirstOrDefault(p => p.id == "password");
-		if (d_password != null)
+		var d_terms = package.GetItem("terms");
+		if(d_terms == "no")
 		{
-			d_password.message = String.IsNullOrEmpty(d_password.value) ? "Password can not be empty" : "";
-			d_password.status = "warning";
+			d_terms.message = "Sorry, you have to agree.";
+			d_terms.status = "error";
 		}
 
+		package.status = "error";
 		return package;
 	}
 
-	// Define model classes
-	public class ValidationData
-	{
-		public string id;
-		public string name;
-		public string value;
-		public string status;
-		public string message;
-	}
-	public class ValidationDataPackage
-	{
-		public string id;
-		public string name;
-		public List<ValidationData> datalist;
-		public string status;
-		public string message;
+####MVC.NET C#:
+
+	[HttpPost]
+        public ActionResult ActionName(ValidationDataPackage package)
+        {
+		var d_email = package.GetItem("email");
+		if(String.IsNullOrEmpty(d_email))
+		{
+			d_email.message = "Email can not be empty";
+			d_email.status = "error";
+		}
+
+		var d_terms = package.GetItem("terms");
+		if(d_terms == "no")
+		{
+			d_terms.message = "Sorry, you have to agree.";
+			d_terms.status = "error";
+		}
+
+		package.status = "error";
+		JsonResult result = new JsonResult();
+		result.Data = package;
+		return result;
 	}
 
 ####Ruby on rails:
@@ -127,10 +102,11 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 				email[:message] = "Email can not be empty" if email[:value].to_s.strip.length == 0
 				email[:status] = "error"
 
-				password = findParam(datalist,"password")
-				password[:message] = "Password can not be empty" if password[:value].to_s.strip.length == 0
-				password[:status] = "warning"
+				terms = findParam(datalist,"terms")
+				terms[:message] = "Sorry, you have to agree." if terms[:value] == "no"
+				terms[:status] = "warning"
 
+				package.status = "error"
 				render :json => package
 			}
 		end
@@ -153,3 +129,5 @@ This plugin requires jQuery
 ## Authors
 
 Tianyu Huang
+
+Spinner is written by Felix Gnass http://fgnass.github.com/spin.js/

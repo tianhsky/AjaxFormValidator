@@ -3,31 +3,10 @@
  * Copyright 2012 Tianyu Huang
  * tianhsky@yahoo.com
  *
- * Version 1.0.1
- *
- * A plugin written in JavaScript to handle form submissions and automatically render messages returned in JSON for each input element.
+ * A plugin written in JavaScript to handle form submissions and automatically render messages responded from server.
  * This plugin requires jQuery.
  * 
  */
-
-
-/* 
-examples:
-<div id="form_group1">
-<input fg="form_group1" name="field1"/>
-<button fg="form_group1" ft="submit"> Submit </button>
-</div>
-
-<script>
-AjaxFormValidator("/xxx/xx",
-{
-form_wrapper: $("#form_group1"),
-form_group: "form_group1",
-success_fun: function (resp) { },
-error_fun: function (resp) { }
-});
-</script>
-*/
 
 $J = jQuery != null ? jQuery : null; //to avoid $ alias conflict with other lib
 var AjaxFormValidator = function (url, options) {
@@ -425,6 +404,7 @@ var AjaxFormValidator = function (url, options) {
             overlay.hide();
             overlay.appendTo(wrapper);
             */
+
 
             //method2
             wrapper = $J('body');
