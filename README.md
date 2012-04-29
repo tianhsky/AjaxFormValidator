@@ -42,14 +42,14 @@ A plugin written in JavaScript to handle form submissions and automatically rend
 	public static ValidationDataPackage Test(ValidationDataPackage package)
 	{
 		var d_email = package.GetItem("email");
-		if(String.IsNullOrEmpty(d_email))
+		if(String.IsNullOrEmpty(d_email.value))
 		{
 			d_email.message = "Email can not be empty";
 			d_email.status = "error";
 		}
 
 		var d_terms = package.GetItem("terms");
-		if(d_terms == "no")
+		if(d_terms.value == "no")
 		{
 			d_terms.message = "Sorry, you have to agree.";
 			d_terms.status = "error";
@@ -65,14 +65,14 @@ A plugin written in JavaScript to handle form submissions and automatically rend
         public ActionResult ActionName(ValidationDataPackage package)
         {
 		var d_email = package.GetItem("email");
-		if(String.IsNullOrEmpty(d_email))
+		if(String.IsNullOrEmpty(d_email.value))
 		{
 			d_email.message = "Email can not be empty";
 			d_email.status = "error";
 		}
 
 		var d_terms = package.GetItem("terms");
-		if(d_terms == "no")
+		if(d_terms.value == "no")
 		{
 			d_terms.message = "Sorry, you have to agree.";
 			d_terms.status = "error";
