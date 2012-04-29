@@ -20,7 +20,7 @@ public class ValidationData
 	{
 		set
 		{
-		_	value = value;
+			value = value;
 		}
 		get
 		{
