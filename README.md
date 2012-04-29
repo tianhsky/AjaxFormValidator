@@ -1,6 +1,6 @@
 # AjaxFormValidator
 
-A plugin written in JavaScript to handle form submissions and automatically render messages returned in JSON for each input element
+A plugin written in JavaScript to handle form submissions and automatically render messages responded from server.
 
 ## How to use it
 
