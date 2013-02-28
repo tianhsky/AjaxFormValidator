@@ -1,4 +1,4 @@
-# AjaxFormValidator
+# AjaxFormValidator (Depreciated)
 
 A plugin written in JavaScript to handle form submissions and automatically render messages responded from server.
 
